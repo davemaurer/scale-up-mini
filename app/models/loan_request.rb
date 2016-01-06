@@ -1,4 +1,5 @@
 class LoanRequest < ActiveRecord::Base
+  self.per_page = 12
   validates :title, :description, :amount,
     :requested_by_date, :repayment_begin_date,
     :repayment_rate, :contributed, presence: true
