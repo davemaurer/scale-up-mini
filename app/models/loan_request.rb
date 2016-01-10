@@ -40,11 +40,13 @@ class LoanRequest < ActiveRecord::Base
   end
 
   def self.projects_with_contributions
-    where("contributed > ?", 0)
+    Rails.cache.fetch("projects-with-contributors-#{id}") do
+      where("contributed > ?", 0)
+    end
   end
 
   def list_project_contributors
-    # if project_contributors was set up as an association instead on a method, we could use after_add and after_remove
+    # if project_contributors was set up as an association instead of a method, we could use after_add and after_remove
     # to clear the cache
     # need to think about whether this will change. if so we need to clear the cache when it changes.
     Rails.cache.fetch("loan-request-project-contributors-#{id}-#{project_contributors.hash}") do
@@ -83,7 +85,7 @@ class LoanRequest < ActiveRecord::Base
   end
 
   def project_contributors
-    LoanRequestsContributor.where(loan_request_id: self.id).pluck(:user_id).map do |user_id|
+    LoanRequestsContributor.includes(:loan_request).where(loan_request_id: self.id).pluck(:user_id).map do |user_id|
       User.find(user_id)
     end
   end

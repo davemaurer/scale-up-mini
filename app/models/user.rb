@@ -27,6 +27,8 @@ class User < ActiveRecord::Base
   end
 
   def contributed_to(loan_request)
-    LoanRequestsContributor.lender_contribution(self.id, loan_request)
+    Rails.cache.fetch("loan-request-contributor-#{id}-#{lender_contribution.hash}") do
+      LoanRequestsContributor.lender_contribution(self.id, loan_request)
+    end
   end
 end
