@@ -4,6 +4,8 @@ class LoanRequest < ActiveRecord::Base
     :requested_by_date, :repayment_begin_date,
     :repayment_rate, :contributed, presence: true
   has_many :orders
+  # has_many :project_contributors, after_add: :clearcache(this is whatever you want, so could be clear_contributor_cache
+  # and you build your own method for this below), after_remove: :clearcache
   has_many :loan_requests_contributors
   has_many :users, through: :loan_requests_contributors
   has_many :loan_requests_categories
@@ -42,7 +44,12 @@ class LoanRequest < ActiveRecord::Base
   end
 
   def list_project_contributors
-    project_contributors.map(&:name).to_sentence
+    # if project_contributors was set up as an association instead on a method, we could use after_add and after_remove
+    # to clear the cache
+    # need to think about whether this will change. if so we need to clear the cache when it changes.
+    Rails.cache.fetch("loan-request-project-contributors-#{id}-#{project_contributors.hash}") do
+      project_contributors.map(&:name).to_sentence
+    end
   end
 
   def progress_percentage
