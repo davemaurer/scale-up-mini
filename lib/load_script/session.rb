@@ -105,8 +105,23 @@ module LoadScript
       session.visit "#{host}/loan_requests/#{rand(20000)}"
     end
 
+    # def new_user_signs_up_as_borrower
+    #   log_out
+    #   session.find("#sign-up-dropdown").click
+    #   session.find("#sign-up-as-borrower").click
+    #   session.within("#sign-up-dropdownSignUpModal") do
+    #     session.fill_in("user_name", with: name)
+    #     session.fill_in("user_email", with: new_user_email(name))
+    #     session.fill_in("user_password", with: "password")
+    #     session.fill_in("user_password_confirmation", with: "password")
+    #     session.click_link_or_button "Create Account"
+    #   end
+    # end
+Definitely!
     def categories
       ["Agriculture", "Education", "Community"]
     end
+
+
   end
 end
